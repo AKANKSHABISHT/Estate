@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { assets, projectsData } from "../assets/assets";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
@@ -12,6 +12,70 @@ const Projects = () => {
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedProject, setSelectedProject] = useState(null);
   const [negotiationResult, setNegotiationResult] = useState("");
+
+  // Custom Select to avoid Chrome native dropdown overflow on mobile
+  const CustomSelect = ({ id, label, value, options, onChange, minWidthClass }) => {
+    const [open, setOpen] = useState(false);
+    const wrapperRef = useRef(null);
+
+    const close = useCallback(() => setOpen(false), []);
+
+    useEffect(() => {
+      const handleClickOutside = (e) => {
+        if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+          setOpen(false);
+        }
+      };
+      const handleEscape = (e) => {
+        if (e.key === "Escape") setOpen(false);
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscape);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("keydown", handleEscape);
+      };
+    }, []);
+
+    return (
+      <div className="w-full sm:w-auto min-w-0 relative" ref={wrapperRef}>
+        <div className="flex items-center gap-2 overflow-hidden">
+          <label htmlFor={id} className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">{label}</label>
+          <button
+            id={id}
+            type="button"
+            className={`relative border border-gray-300 rounded px-3 pr-8 py-1.5 text-xs sm:text-sm leading-tight h-9 sm:h-10 w-full text-left truncate cursor-pointer ${minWidthClass || ""}`}
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            title={String(value)}
+          >
+            {String(value)}
+            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">▾</span>
+          </button>
+        </div>
+        {open && (
+          <ul
+            role="listbox"
+            className={`absolute left-0 right-0 top-full z-40 mt-1 max-h-60 overflow-auto w-full border border-gray-200 bg-white rounded shadow-lg ${minWidthClass || ""}`}
+          >
+            {options.map((opt) => (
+              <li
+                key={opt}
+                role="option"
+                aria-selected={opt === value}
+                className={`px-3 py-2 text-xs sm:text-sm truncate cursor-pointer hover:bg-gray-100 ${opt === value ? "bg-gray-50 font-medium" : ""}`}
+                onClick={() => { onChange(opt); close(); }}
+                title={opt}
+              >
+                {opt}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  };
 
   useEffect(() => {
     const updateCardsToShow = () => {
@@ -106,55 +170,30 @@ const Projects = () => {
 
       {/* Filters & Sort */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6">
-        <div className="flex items-center gap-2 w-full sm:w-auto min-w-0 overflow-hidden">
-          <label
-            htmlFor="purpose"
-            className="text-xs sm:text-sm text-gray-600 whitespace-nowrap"
-          >
-            Purpose
-          </label>
-          <select
-            id="purpose"
-            className="border border-gray-300 rounded px-3 pr-8 py-1.5 text-xs sm:text-sm leading-tight h-9 sm:h-10 w-full sm:w-40 truncate cursor-pointer"
-            value={purposeFilter}
-            title={purposeFilter}
-            onChange={(e) => setPurposeFilter(e.target.value)}
-          >
-            <option value="All">All</option>
-            <option value="Buy">Buy</option>
-            <option value="Rent">Rent</option>
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2 w-full sm:w-auto min-w-0 overflow-hidden">
-          <label htmlFor="location" className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">Location</label>
-          <select
-            id="location"
-            className="border border-gray-300 rounded px-3 pr-8 py-1.5 text-xs sm:text-sm leading-tight h-9 sm:h-10 w-full max-w-full sm:w-44 truncate cursor-pointer"
-            value={locationFilter}
-            title={locationFilter}
-            onChange={(e) => setLocationFilter(e.target.value)}
-          >
-            {uniqueLocations.map((loc) => (
-              <option key={loc} value={loc}>{loc}</option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto min-w-0 overflow-hidden">
-          <label htmlFor="sort" className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">Sort</label>
-          <select
-            id="sort"
-            className="border border-gray-300 rounded px-3 pr-8 py-1.5 text-xs sm:text-sm leading-tight h-9 sm:h-10 w-full max-w-full sm:w-48 truncate cursor-pointer"
-            value={sortBy}
-            title={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <option value="relevance">Relevance</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="title">Title A–Z</option>
-          </select>
-        </div>
+        <CustomSelect
+          id="purpose"
+          label="Purpose"
+          value={purposeFilter}
+          options={["All", "Buy", "Rent"]}
+          onChange={(val) => setPurposeFilter(val)}
+          minWidthClass="sm:min-w-[10rem]"
+        />
+        <CustomSelect
+          id="location"
+          label="Location"
+          value={locationFilter}
+          options={uniqueLocations}
+          onChange={(val) => setLocationFilter(val)}
+          minWidthClass="sm:min-w-[11rem]"
+        />
+        <CustomSelect
+          id="sort"
+          label="Sort"
+          value={sortBy}
+          options={["relevance", "price-asc", "price-desc", "title"]}
+          onChange={(val) => setSortBy(val)}
+          minWidthClass="sm:min-w-[12rem]"
+        />
         <div className="sm:ml-auto flex items-center gap-3 w-full sm:w-auto min-w-0">
           <span className="text-sm text-gray-500 whitespace-nowrap">{filteredProjects.length} results</span>
           <button
