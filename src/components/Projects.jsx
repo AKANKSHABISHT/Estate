@@ -58,14 +58,14 @@ const Projects = () => {
       <div className="flex justify-end items-center mb-8">
         <button
           onClick={prevProject}
-          className="p-3 bg-gray-200 rounded mr-2"
+          className="p-3 bg-gray-200 rounded mr-2 cursor-pointer"
           aria-label="Previous Project"
         >
           <img src={assets.left_arrow} alt="previous" />
         </button>
         <button
           onClick={nextProject}
-          className="p-3 bg-gray-200 rounded"
+          className="p-3 bg-gray-200 rounded cursor-pointer"
           aria-label="Next Project"
         >
           <img src={assets.right_arrow} alt="next" />
