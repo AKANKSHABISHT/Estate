@@ -32,44 +32,49 @@ export const assets = {
 }
 
 export const projectsData = [
-    {
-      title: "Skyline Haven",
-      price: "$2,50,000",
-      location: "California",
-      image: project_img_1
-    },
-    {
-      title: "Vista Verde",
-      price: "$2,50,000",
-      location: "San Francisco",
-      image: project_img_2
-    },
-    {
-      title: "Serenity Suites",
-      price: "$2,50,000",
-      location: "Chicago",
-      image: project_img_3
-    },
-    {
-      title: "Central Square",
-      price: "$2,50,000",
-      location: "Los Angeles",
-      image: project_img_4
-    },
-    {
-      title: "Vista Verde",
-      price: "$2,50,000",
-      location: "San Francisco",
-      image: project_img_5
-    },
-    {
-      title: "Serenity Suites",
-      price: "$2,50,000",
-      location: "Chicago",
-      image: project_img_6
-    },
-    
-  ];
+  {
+    title: "Skyline Haven",
+    price: "₹75,00,000",
+    location: "Mumbai",
+    image: project_img_1,
+    purpose: "Buy"
+  },
+  {
+    title: "Vista Verde",
+    price: "₹45,000",
+    location: "Delhi",
+    image: project_img_2,
+    purpose: "Rent"
+  },
+  {
+    title: "Serenity Suites",
+    price: "₹60,00,000",
+    location: "Bangalore",
+    image: project_img_3,
+    purpose: "Buy"
+  },
+  {
+    title: "Central Square",
+    price: "₹55,000",
+    location: "Hyderabad",
+    image: project_img_4,
+    purpose: "Rent"
+  },
+  {
+    title: "Vista Verde",
+    price: "₹85,00,000",
+    location: "Pune",
+    image: project_img_5,
+    purpose: "Buy"
+  },
+  {
+    title: "Serenity Suites",
+    price: "₹40,000",
+    location: "Ahmedabad",
+    image: project_img_6,
+    purpose: "Rent"
+  }
+];
 
   export const testimonialsData = [
     {
